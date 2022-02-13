@@ -2,14 +2,20 @@
 #include <stdlib.h>
 #include <string.h>
 
+#define BOOL int 
+#define TRUE 1 
+#define FALSE 0
+
 //<DOC> Stack Only supports 0-9 for now <DOC>
 //<INF> Better Stack will come soon <INF>
+//<DOC> Write Function type has defects <DOC>
+//<DOC> Need to rework on # (newline) flag <DOC>
 
 int main(int argc,char** argv) {
   if(argv[1] == NULL){
-    printf("USAGE: ./sim filename\n");
+    printf("USAGE: ./sim filename.wpp\n");
   }
-
+  BOOL isNewLine = FALSE;
 
   //Tokens - Start
   const char* TOK_WRITE = "Write"; 
@@ -23,11 +29,14 @@ int main(int argc,char** argv) {
   const char* TOK_P = "PAUSE";
   const char* TOK_F_S = "FLUSH";
   const char* TOK_PL_IN = "OPERATE_STACK-ATINDEX";
+  const char* TOK_S_R = "STACK-RESULT";
+  const char* TOK_P2 = "PUSH-T";
+  const char* TOK_S_IN = "STACK-INDEX";
 
   //Tokens - End 
 
   int STACK[15000] = {0};
-  int count = -1;
+  int count = 0;
 
 
   FILE *l;
@@ -63,7 +72,7 @@ int main(int argc,char** argv) {
 
             //NewLine Revisited (rework needed on New Line)
             if(storage[al+1] == '#'){     
-              printf("\n");
+                printf("\n");
             }
           }
         }
@@ -103,10 +112,71 @@ int main(int argc,char** argv) {
 
 
       //Particular Operation at a particular index of the global stack
+      //Under Work
       else if(strcmp(newtoken,TOK_PL_IN) == 0){
+        int first_;
+        int sec_; 
+        char op;
+        
+        first_ = (int)storage[i+2] - '0';
+        op = storage[i+4]; 
+        sec_ = (int)storage[i+6]  - '0';
+
+        if(first_ == 0){
+          printf("ERROR: Calling Stack Storage Reserved portion containing blank values!\n");
+        }
+        switch(op){
+          case '+':
+            STACK[0] = STACK[first_] + STACK[sec_];
+            break;
+          case '-': 
+            STACK[0] = STACK[first_] - STACK[sec_];
+            break;
+          case '*':
+            STACK[0] = STACK[first_] * STACK[sec_];
+            break;
+          case '/':
+            STACK[0] = STACK[first_] / STACK[sec_];
+            break;
+        }
+        
+      }
+      else if(strcmp(newtoken,TOK_S_R) == 0){
+        printf("%d",STACK[0]);
+      }
+
+      else if(strcmp(newtoken,TOK_P2) == 0){
+        int n1,n2;
+        char keyset[] = {'\0'};
+        int t=0;
+        int t2=0; 
+
+        for(int g=i+2;g<50;g++){
+          keyset[t] = storage[g];
+          t+=1;
+          if(storage[g+1] == ','){ 
+            n1 = atoi(keyset);
+            for(int j=g+2;j<50;j++){
+              keyset[t2] = storage[j];
+              t2 += 1; 
+              if(storage[j+1] == ';'){
+                n2 = atoi(keyset);
+                break;
+              }
+            }
+            break;
+          }
+        }
+        STACK[n2] = n1;
+      }
+
+
+      //STACK-AT Unimplemented
+      else if(strcmp(newtoken,TOK_S_IN) == 0){
         printf("%c",storage[i]);
       }
-    
+      
+       
     }
 
     

@@ -113,6 +113,7 @@ int main(int argc,char** argv) {
 
       //Particular Operation at a particular index of the global stack
       //Under Work
+      //Need To Make a better stack operation set
       else if(strcmp(newtoken,TOK_PL_IN) == 0){
         int first_;
         int sec_; 
@@ -123,7 +124,7 @@ int main(int argc,char** argv) {
         sec_ = (int)storage[i+6]  - '0';
 
         if(first_ == 0){
-          printf("ERROR: Calling Stack Storage Reserved portion containing blank values!\n");
+          printf("ERROR: Calling Stack Storage Reserved portion containing blank values! or Pre-Stored , Pre-Used values\n");
         }
         switch(op){
           case '+':
@@ -138,8 +139,8 @@ int main(int argc,char** argv) {
           case '/':
             STACK[0] = STACK[first_] / STACK[sec_];
             break;
-        }
         
+        }
       }
       else if(strcmp(newtoken,TOK_S_R) == 0){
         printf("%d",STACK[0]);
@@ -155,11 +156,13 @@ int main(int argc,char** argv) {
           keyset[t] = storage[g];
           t+=1;
           if(storage[g+1] == ','){ 
+            keyset[t] = '\0';
             n1 = atoi(keyset);
             for(int j=g+2;j<50;j++){
               keyset[t2] = storage[j];
               t2 += 1; 
               if(storage[j+1] == ';'){
+                keyset[t2] = '\0';
                 n2 = atoi(keyset);
                 break;
               }
@@ -167,13 +170,30 @@ int main(int argc,char** argv) {
             break;
           }
         }
-        STACK[n2] = n1;
+        if(n2 != 0){
+          STACK[n2] = n1;
+        }
+        else if(n2 == 0){
+          printf("ERROR: Stack Storage Portion Access Permission Denied\nStack Storage can't be accessed!");
+        }
       }
 
 
       //STACK-AT Unimplemented
       else if(strcmp(newtoken,TOK_S_IN) == 0){
-        printf("%c",storage[i]);
+        char n[] = {'\0'};
+        int t = 0;
+        int in;
+        for(int gh=i+2;gh<500;gh++){
+          n[t] = storage[gh];
+          t += 1; 
+          if(storage[gh+1] == ';'){
+            n[t] = '\0';
+            in = atoi(n);
+            break;
+          }
+        }
+        printf("%d",STACK[in]);
       }
       
        

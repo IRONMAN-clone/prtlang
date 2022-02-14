@@ -114,17 +114,56 @@ int main(int argc,char** argv) {
       //Particular Operation at a particular index of the global stack
       //Under Work
       //Need To Make a better stack operation set
+      //stack-operation set is remade and works better
       else if(strcmp(newtoken,TOK_PL_IN) == 0){
         int first_;
         int sec_; 
         char op;
-        
+
+        char tok[] = {'\0'};
+        int t=0;
+        /*
         first_ = (int)storage[i+2] - '0';
         op = storage[i+4]; 
         sec_ = (int)storage[i+6]  - '0';
+        */
+       for(int f=i+2;f<500;f++){
+         tok[t] = storage[f]; 
+         t+=1; 
+         if(storage[f+1] == ','){
+           tok[t] = '\0';
+           first_ = atoi(tok); 
+           t = t-t;
+           for(int f2=f+1;f2<500;f2++){
+             tok[t] = storage[f2];
+             t+=1;
+             if(storage[f2+1] == ','){
+                op = storage[f2];
+                t = t-t; 
+                for(int f3=f2+2;f3<500;f3++){
+                  tok[t] = storage[f3];
+                  t += 1;
+                  if(storage[f3+1] == ';'){
+                    tok[t] = '\0';
+                    sec_ = atoi(tok);
+                    break;
+                  }
+                }
+                break;
+             }
+           }
+           break;
+         }
+       }
 
         if(first_ == 0){
           printf("ERROR: Calling Stack Storage Reserved portion containing blank values! or Pre-Stored , Pre-Used values\n");
+        }
+        if(first_ > sizeof(STACK)/sizeof(STACK[0])){
+          printf("ERROR: You can not access the memory that is out of the reserved memory\n");
+        }
+        if(first_ < 0){
+          printf("ERROR: You can not access the memory that is out of the reserved memory\n");
         }
         switch(op){
           case '+':
@@ -139,7 +178,18 @@ int main(int argc,char** argv) {
           case '/':
             STACK[0] = STACK[first_] / STACK[sec_];
             break;
-        
+          case '<':
+            STACK[0] = STACK[first_] << STACK[sec_];
+            break;
+          case '>':
+            STACK[0] = STACK[first_] >> STACK[sec_];
+            break; 
+          case '^':
+            STACK[0] = STACK[first_] ^ STACK[sec_];
+            break;
+          case '|':
+            STACK[0] = STACK[first_] | STACK[sec_];
+            break;
         }
       }
       else if(strcmp(newtoken,TOK_S_R) == 0){
@@ -176,10 +226,16 @@ int main(int argc,char** argv) {
         else if(n2 == 0){
           printf("ERROR: Stack Storage Portion Access Permission Denied\nStack Storage can't be accessed!");
         }
+        if(n2 > sizeof(STACK)/sizeof(STACK[0])){
+          printf("ERROR: You can not access the memory that is out of the reserved memory\n");
+        }
+        if(n2 < 0){
+          printf("ERROR: You can not access the memory that is out of the reserved memory\n");
+        }
       }
 
 
-      //STACK-AT Unimplemented
+      //STACK-AT Implemented to peek at a perticular index
       else if(strcmp(newtoken,TOK_S_IN) == 0){
         char n[] = {'\0'};
         int t = 0;

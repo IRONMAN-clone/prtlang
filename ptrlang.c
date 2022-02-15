@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <windows.h>
+#include <conio.h>
 
 #define BOOL int 
 #define TRUE 1 
@@ -32,6 +34,17 @@ int main(int argc,char** argv) {
   const char* TOK_S_R = "STACK-RESULT";
   const char* TOK_P2 = "PUSH-T";
   const char* TOK_S_IN = "STACK-INDEX";
+  const char* TOK_OS_SL = "SLP-FOR";
+
+  //Not-Formatted PrintF prototype (Unimplemented)
+  const char* TOK_BT_PF = "N-PRINT";
+
+  //Variable Initializers (IN WORK)
+  const char* TOK_CHAR_IN = "PUSH-C";
+  const char* TOK_CHAR_INDEX = "CSTACK-INDEX";
+
+  char CHAR_STACK_STACK[15000] = {'\0'};
+  //Variable Initializers
 
   //Tokens - End 
 
@@ -192,10 +205,12 @@ int main(int argc,char** argv) {
             break;
         }
       }
+
       else if(strcmp(newtoken,TOK_S_R) == 0){
         printf("%d",STACK[0]);
       }
 
+      //Character Stack Operation
       else if(strcmp(newtoken,TOK_P2) == 0){
         int n1,n2;
         char keyset[] = {'\0'};
@@ -234,8 +249,81 @@ int main(int argc,char** argv) {
         }
       }
 
+      else if(strcmp(newtoken,TOK_CHAR_IN) == 0){
+        int n2;
+        char n1;
+        char keyset[] = {'\0'};
+        int t=0;
+        int t2=0; 
 
-      //STACK-AT Implemented to peek at a perticular index
+        n1 = storage[i+2];
+        for(int g=i+2;g<50;g++){
+          keyset[t] = storage[g];
+          t+=1;
+          if(storage[g+1] == ','){ 
+            keyset[t] = '\0';
+            for(int j=g+2;j<50;j++){
+              keyset[t2] = storage[j];
+              t2 += 1; 
+              if(storage[j+1] == ';'){
+                keyset[t2] = '\0';
+                n2 = atoi(keyset);
+                break;
+              }
+            }
+            break;
+          }
+        }
+        
+        CHAR_STACK_STACK[n2] = n1;
+
+        if(n2 > sizeof(CHAR_STACK_STACK)/sizeof(CHAR_STACK_STACK[0])){
+          printf("ERROR: You can not access the memory that is out of the reserved memory\n");
+        }
+        if(n2 < 0){
+          printf("ERROR: You can not access the memory that is out of the reserved memory\n");
+        }
+      }
+    
+
+
+      else if(strcmp(newtoken,TOK_CHAR_INDEX) == 0){
+        int n1;
+        char keyto[] = {'\0'};
+        int t = 0;
+        for(int i3=i+2; i3 < 500;i3++){
+          keyto[t] = storage[i3];
+          t += 1;
+          if(storage[i3] == ';')
+          {
+            keyto[t] = '\0';
+            n1=atoi(keyto);
+            break;
+          }
+        }
+        printf("%c",CHAR_STACK_STACK[n1]);
+      }
+
+      //Sleep() function
+      else if(strcmp(newtoken,TOK_OS_SL) == 0)
+      {
+        char ntok[] = {'\0'};
+        int forsl; 
+        int t = 0;
+
+        for(int i3=i+2;i3<500;i3++){
+          ntok[t] = storage[i3];
+          t += 1;
+          if(storage[i3+1] == ';'){
+            ntok[t] = '\0';
+            forsl = atoi(ntok);
+            break;
+          }
+        }
+        Sleep(forsl);
+      }
+
+      //STACK-INDEX Implemented to peek at a perticular index
       else if(strcmp(newtoken,TOK_S_IN) == 0){
         char n[] = {'\0'};
         int t = 0;
@@ -250,12 +338,11 @@ int main(int argc,char** argv) {
           }
         }
         printf("%d",STACK[in]);
-      }
-      
-       
+      }  
     }
 
-    
+    //Next ToDo String Stack Operation 
+    //Next Next IF - THEN - ELSE statement 
 
     /*
     if(newtoken[0] == '('){
@@ -268,6 +355,5 @@ int main(int argc,char** argv) {
 
     //printf("%s",storage);
   } 
-
   return 0;
 }
